@@ -1,0 +1,20 @@
+apiVersion: apps/v1 # This is the API version
+kind: Deployment # This is the kind of object we are creating
+metadata: # This is the metadata of the object
+  name: mi-pagina-web-deployment # This is the name of the object
+spec: # This is the specification of the object
+  replicas: 1 # This is the number of replicas
+  selector: # This is the selector of the object
+    matchLabels: # This is the matchLabels of the object
+      app: mi-pagina-web # This is the app of the object
+  template: # This is the template of the object
+    metadata: # This is the metadata of the object
+      labels: # This is the labels of the object
+        app: mi-pagina-web # This is the app of the object
+    spec: # This is the specification of the object
+      containers: # This is the containers of the object
+        - name: mi-pagina-web # This is the name of the container
+          image: mi-pagina-web-image:latest # This is the image of the container
+          imagePullPolicy: Never #  This is the imagePullPolicy of the container
+          ports: # This is the ports of the container
+            - containerPort: 80 # This is the containerPort of the container
