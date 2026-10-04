@@ -1,20 +1,47 @@
-apiVersion: apps/v1 # This is the API version
-kind: Deployment # This is the kind of object we are creating
-metadata: # This is the metadata of the object
-  name: mi-pagina-web-deployment # This is the name of the object
-spec: # This is the specification of the object
-  replicas: 1 # This is the number of replicas
-  selector: # This is the selector of the object
-    matchLabels: # This is the matchLabels of the object
-      app: mi-pagina-web # This is the app of the object
-  template: # This is the template of the object
-    metadata: # This is the metadata of the object
-      labels: # This is the labels of the object
-        app: mi-pagina-web # This is the app of the object
-    spec: # This is the specification of the object
-      containers: # This is the containers of the object
-        - name: mi-pagina-web # This is the name of the container
-          image: mi-pagina-web-image:latest # This is the image of the container
-          imagePullPolicy: Never #  This is the imagePullPolicy of the container
-          ports: # This is the ports of the container
-            - containerPort: 80 # This is the containerPort of the container
+apiVersion: apps/v1 # Versión de la API de Kubernetes utilizada
+kind: Deployment # Tipo de recurso que administra las réplicas de la aplicación
+metadata:
+  name: mi-pagina-web-deployment # Nombre del Deployment
+  labels:
+    app.kubernetes.io/name: mi-pagina-web
+spec:
+  replicas: 1 # Número de réplicas deseado
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mi-pagina-web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mi-pagina-web
+    spec:
+      containers:
+        - name: mi-pagina-web # Nombre del contenedor
+          image: mi-pagina-web-image:v1 # Usa una etiqueta versionada; debe coincidir con la imagen construida localmente
+          imagePullPolicy: IfNotPresent # Reutiliza la imagen local o la descarga si hace falta
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+            failureThreshold: 12
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 64Mi
